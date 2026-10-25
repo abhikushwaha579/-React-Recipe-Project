@@ -1,50 +1,30 @@
 import { Link } from "react-router";
 
 function RecipeCard({ recipe }) {
-  const {
-    id,
-    prepTimeMinutes,
-    cookTimeMinutes,
-    image,
-    name,
-    cuisine,
-    difficulty,
-    rating,
-  } = recipe;
-  const totalTime = prepTimeMinutes + cookTimeMinutes;
-
+  const totalTime = (recipe.prepTimeMinutes || 0) + (recipe.cookTimeMinutes || 0);
   return (
-    <Link
-      to={`/recipe/${id}`}
-      className="bg-card border border-border rounded-md hover:border-accent overflow-hidden flex flex-col"
-    >
-      <img src={image} alt={name} className="h-48 w-full object-cover" />
-      <div className="p-4 flex flex-col flex-1">
-        <h3 className="font-serif font-bold text-lg text-text mb-1">{name}</h3>
-        <p className="text-sm text-muted mb-3">
-          {cuisine} - {difficulty}
-        </p>
-        <div className="mt-auto flex justify-between items-center text-sm">
-          <span className="flex items-center gap-1 font-medium">
-            <svg className="w-4 h-4 fill-accent" viewBox="0 0 24 24">
-              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-            </svg>
-            {rating}
+    <article className="recipe-card">
+      <Link to={`/recipe/${recipe.id}`} aria-label={`View ${recipe.name}`}>
+        <div className="recipe-image-wrap">
+          <img src={recipe.image} alt={recipe.name ? `${recipe.name} recipe` : "Prepared meal"} className="recipe-image" loading="lazy" />
+        </div>
+      </Link>
+      <div className="recipe-body">
+        <div className="recipe-meta">
+          {recipe.cuisine && <span>{recipe.cuisine}</span>}
+          {recipe.cuisine && recipe.difficulty && <span className="dot" aria-hidden="true" />}
+          {recipe.difficulty && <span>{recipe.difficulty}</span>}
+        </div>
+        <h3 className="recipe-title"><Link to={`/recipe/${recipe.id}`}>{recipe.name}</Link></h3>
+        <div className="recipe-footer">
+          <span className="rating" aria-label={recipe.rating ? `${recipe.rating} out of 5 stars` : undefined}>
+            {recipe.rating != null && <><span aria-hidden="true">★</span> {recipe.rating}</>}
           </span>
-          <span className="flex items-center gap-1 text-muted">
-            <svg
-              className="w-4 h-4 stroke-muted fill-none"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <polyline points="12 6 12 12 16 14" />
-            </svg>
-            {totalTime} mins
-          </span>
+          {totalTime > 0 && <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>{totalTime} min</span>}
+          <Link to={`/recipe/${recipe.id}`} className="view-link">View recipe <span aria-hidden="true">→</span></Link>
         </div>
       </div>
-    </Link>
+    </article>
   );
 }
 
